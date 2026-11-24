@@ -1,0 +1,7 @@
+[
+  {"contract": "C-101", "doc_no": "INV-5521", "date": "2026-10-21", "amount": 9875.40, "budget_code": "6210.600", "supplier": "Northwind Building Supply"},
+  {"contract": "C-205", "doc_no": "SV-1182", "date": "2026-10-19", "amount": 18340.75, "budget_code": "6260.480", "supplier": "CleanCity Services"},
+  {"contract": "C-102", "doc_no": "INV-5598", "date": "2026-10-23", "amount": 4620.00, "budget_code": "6210.600", "supplier": "Northwind Building Supply"},
+  {"contract": "C-310", "doc_no": "TC-0457", "date": "2026-10-30", "amount": 48250.00, "budget_code": "6210.600", "supplier": "TruckCare Ltd"},
+  {"contract": "C-101", "doc_no": "INV-5521", "date": "2026-10-21", "amount": 9875.40, "budget_code": "6210.600", "supplier": "Northwind Building Supply"}
+]

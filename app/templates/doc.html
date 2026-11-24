@@ -1,0 +1,44 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>LedgerWeb | New document</title>
+<style>
+body{font-family:sans-serif;margin:24px} .row{margin:8px 0} label{display:inline-block;width:130px}
+#suggest{border:1px solid #aaa;max-width:420px} #suggest div{padding:3px 6px} #suggest .active{background:#cde}
+#status{margin-top:12px;font-weight:bold}
+</style></head><body>
+<h1>New document — contract {{ contract }}</h1>
+<div class="row"><label for="{{ fields['Document №'] }}">Document №</label><input id="{{ fields['Document №'] }}"></div>
+<div class="row"><label for="{{ fields['Date'] }}">Date</label><input id="{{ fields['Date'] }}" placeholder="YYYY-MM-DD"></div>
+<div class="row"><label for="{{ fields['Supplier'] }}">Supplier</label><input id="{{ fields['Supplier'] }}" value="{{ c.supplier }}" readonly></div>
+<div class="row"><label for="{{ fields['Amount'] }}">Amount</label><input id="{{ fields['Amount'] }}" inputmode="decimal"></div>
+<div class="row"><label for="{{ fields['Budget code'] }}">Budget code</label><input id="{{ fields['Budget code'] }}" autocomplete="off"></div>
+<div id="suggest"></div>
+<button id="BTN_SAVE">Save</button>
+<div id="status"></div>
+<script>
+const CODES = {{ codes|tojson }};
+const F = {{ fields|tojson }};
+const code = document.getElementById(F["Budget code"]);
+const box = document.getElementById("suggest");
+let list = [], active = 0;
+function render(){ box.innerHTML = list.map((c,i)=>`<div class="${i===active?'active':''}">${c[0]} ${c[1]}</div>`).join(""); }
+code.addEventListener("input", ()=>{
+  const t = code.value.trim();
+  // Quirk copied from the real system: substring match on code AND name, first hit wins on Enter.
+  list = t ? CODES.filter(c => (c[0]+" "+c[1]).includes(t)) : [];
+  active = 0; render();
+});
+code.addEventListener("keydown", e=>{
+  if(!list.length) return;
+  if(e.key==="ArrowDown"){ active=Math.min(active+1,list.length-1); render(); e.preventDefault(); }
+  if(e.key==="ArrowUp"){ active=Math.max(active-1,0); render(); e.preventDefault(); }
+  if(e.key==="Enter"){ const c=list[active]; code.value=c[0]+" "+c[1]; list=[]; render(); e.preventDefault(); }
+});
+document.getElementById("BTN_SAVE").addEventListener("click", async ()=>{
+  const events = Object.entries(F).map(([label,id])=>({control:label, value:document.getElementById(id).value}));
+  const r = await fetch("/api/request",{method:"POST",headers:{"Content-Type":"application/json"},
+                         body:JSON.stringify({contract:{{ contract|tojson }}, events})});
+  const j = await r.json();
+  document.getElementById("status").textContent = j.ok ? ("Saved: document " + j.id) : ("Error: " + j.error);
+});
+</script>
+</body></html>
